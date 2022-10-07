@@ -1,0 +1,106 @@
+---
+title: "AI Assignment 1"
+author: "Michael  Scott. Bradley Culligan"
+date: '2022-10-07'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+use_python("C:/Users/micha/AppData/Local/Programs/Python/Python39/python.exe")
+```
+
+# Introudction 
+
+Cardiovascular Disease (CVD) is the second leading cause of death in South Africa after HIV/AIDS [https://www.heartfoundation.co.za/wp-content/uploads/2017/10/CVD-Stats-Reference-Document-2016-FOR-MEDIA-1.pdf]. Globally, CVD kills over 17.3 million people every year [World Health Organization. Global status report on noncommunicable diseases 2014. Geneva: WHO, 2014]. Nearly, half of all South Africans have at least 1 in 3 key risk factors for heart disease: High blood pressure, high cholesterol and smoking. Other key risk factors include diabetic status, lack of physical activity and excessive alcohol intake.
+
+In South Africa access to health care is often limited particularly in low income and rural areas [https://www.opensaldru.uct.ac.za/handle/11090/613#:~:text=Access%20to%20health%20care%20is,even%20in%20remote%20rural%20areas.]. This, unequal access to health care was exacerbated during the recent Corona Virus Pandemic. Access, to health assessments is often limited or not feasible. However, 74.1% of South Africans have access to the internet. Therefore, it is important to be able to assess the risk of CVD and other health complications via a simple self reported *Personal Key Health Indicators* that can easily be done online. With the following shortfalls and opportunities in mind we identify the following objective:
+
+- To create a tool that allows people to assess there risk of CVD and offer medical and health insights to mitigiate the risk. 
+
+The potential users of our app include South Africans with limited access to health care who otherwise would not be able to gain health and lifestyle insights regarding their personal heart health and well being. 
+
+
+# Problem Analysis:
+
+We are evaluating data from the 2020 annual CDC survey of over 400k adults related to their health status in order to model and predict the risk of heart disease. The dataset consists of 18 self reported variables: 
+
+Variable          Description
+----------        -----------
+HeartDisease      Respondents that have ever reported having coronary heart disease (CHD) or 
+                  myocardial infarction (MI)
+BMI               Body Mass Index (BMI)
+Smoking           Respondents that have smoked more than 100 cigarettes in their lifetime
+AlcoholDrinking   Heavy drinkers (adult men having more than 14 drinks per week and adult women 
+                  having more than 7 drinks per week)
+Stroke            Respondents that have had a stoke.
+PhysicalHealth    Days in the past month where the respondent rated their physical health as poor
+MentalHealth      Days in the past month where the respondent rated their mental health as poor
+DiffWalking       Does the respondent have difficulty walking or climbing stairs
+Sex               Male or Female
+AgeCategory       Fourteen-level age category
+Race              Imputed race/ethnicity value
+Diabetic          Respondents that have diabetes
+PhysicalActivity  Respondents who reported doing physical activity or exercise during the past 30 
+                  days other than their regular job
+GenHealth         How the respondents rate their general health
+SleepTime         How many hours on average does a respondent sleep in a day
+Asthma            Respondents that have asthma
+KidneyDisease     Respondents that have kidney disease (excluding kidney stones, urinary 
+                  incontinence and bladder infections)
+SkinCancer        Respondents that have/had skin cancer
+
+
+The response variable is heart disease and the other 17 variables are explanatory variables of which 13 are categorical and 4 are continuous. In order to build our Bayesian Network Model we first conduct an Experimental Data Analysis to try and empirically determine causality after which we will consult expert sources to determine the veracity of our findings. 
+
+## Experimental Data Analysis
+
+
+
+```{python include=FALSE}
+import gnb as gnb
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from collections import Counter
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+import pyAgrum as gum
+import pyAgrum.lib.notebook as gnb
+from sklearn.metrics import accuracy_score
+import pyAgrum.skbn as skbn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data = pd.read_csv('heart_2020_cleaned.csv')
+data.head
+```
+
+
+```{python echo=FALSE, fig.cap="Count Plots of Binary Categorical Variables"}
+plt.rcParams.update({'font.size': 4})
+catagoricalVariables = ['Sex', 'Smoking', 'KidneyDisease', 'AlcoholDrinking', 'Stroke', 'DiffWalking', 'PhysicalActivity', 'Asthma', 'SkinCancer']
+fig, ax = plt.subplots(3, 3)
+fig.tight_layout(h_pad=2, w_pad=4, pad=3)
+x = 0
+y = 0
+for i in catagoricalVariables:
+    sns.countplot(x= data[i], hue = 'HeartDisease', data = data, ax=ax[x, y])
+    ax[x, y].set_xlabel(i)
+    ax[x, y].legend(['No Heart Disease', 'Heart Disease'])
+    ax[x, y].set_ylabel('Frequency')
+    #ax[x, y].set_title(i)
+    x += 1
+    if (x == 3):
+        y += 1
+        x = 0
+plt.show()
+fig.savefig("BinaryVar.png")
+```
+
+
+
+### References
+
+1) 
