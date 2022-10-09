@@ -3,3 +3,4 @@ pandas_profiling
 pyAgrum
 sklearn
 seaborn
+imbalanced-learn
